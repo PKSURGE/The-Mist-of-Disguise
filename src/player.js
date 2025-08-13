@@ -11,6 +11,7 @@ export class Player {
     this.maxStamina = 100;
     this.health = 100;
     this.maxHealth = 100;
+    this.attackCooldown = 0;
 
     this.input = new Input(canvas);
 
