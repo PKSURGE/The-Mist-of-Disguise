@@ -12,6 +12,7 @@ export class Player {
     this.health = 100;
     this.maxHealth = 100;
     this.attackCooldown = 0;
+    this.isAttacking = false;
 
     this.input = new Input(canvas);
 
@@ -45,12 +46,14 @@ export class Player {
     hit.parent = body;
     hit.position.z = 1.0;
     this.hitbox = hit;
-
-    this.attackCooldown = 0;
-    this.isAttacking = false;
   }
 
   update(dt) {
+    // Reduce attack cooldown
+    if (this.attackCooldown > 0) {
+      this.attackCooldown -= dt;
+    }
+
     const down = this.input.down;
     const { dx } = this.input.consumeMouse();
 
@@ -111,5 +114,19 @@ export class Player {
     }
 
     impostor.setLinearVelocity(v);
+  }
+
+  attack(enemies) {
+    if (this.attackCooldown > 0) return;
+
+    this.attackCooldown = 0.6; // seconds between attacks
+    const attackRange = 2.5;
+
+    enemies.forEach(enemy => {
+      const dist = BABYLON.Vector3.Distance(this.mesh.position, enemy.mesh.position);
+      if (dist <= attackRange) {
+        enemy.onHit(20); // damage
+      }
+    });
   }
 }
